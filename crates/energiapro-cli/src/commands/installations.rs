@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use clap::Args;
-use energiapro_sdk::{ClientOptions, EnergiaPro, Installation};
+use energiapro::{ClientOptions, EnergiaPro, Installation};
 use polars::prelude::*;
 
 use crate::DynError;

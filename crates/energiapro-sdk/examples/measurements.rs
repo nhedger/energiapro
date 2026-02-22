@@ -1,4 +1,4 @@
-use energiapro_sdk::{EnergiaPro, MeasurementScope};
+use energiapro::{EnergiaPro, MeasurementScope};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

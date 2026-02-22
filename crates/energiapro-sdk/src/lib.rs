@@ -9,9 +9,9 @@
 //! # Examples
 //!
 //! ```no_run
-//! use energiapro_sdk::{EnergiaPro, MeasurementScope};
+//! use energiapro::{EnergiaPro, MeasurementScope};
 //!
-//! # async fn demo() -> Result<(), energiapro_sdk::EnergiaProError> {
+//! # async fn demo() -> Result<(), energiapro::EnergiaProError> {
 //! let sdk = EnergiaPro::new("username", "secret_key")?;
 //! let measurements = sdk
 //!     .measurements
