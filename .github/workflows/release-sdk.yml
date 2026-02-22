@@ -1,0 +1,65 @@
+name: Release SDK
+
+on:
+  push:
+    tags:
+      - "sdk-v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-sdk-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  publish:
+    name: Publish SDK to crates.io
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Validate tag and SDK version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${GITHUB_REF_NAME}"
+          if [[ ! "${tag}" =~ ^sdk-v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "SDK release tags must match sdk-vX.Y.Z. Got: ${tag}" >&2
+            exit 1
+          fi
+
+          version="${tag#sdk-v}"
+          sdk_version="$(grep -m1 '^version = ' crates/energiapro-sdk/Cargo.toml | cut -d '"' -f2)"
+
+          if [[ "${version}" != "${sdk_version}" ]]; then
+            echo "SDK version (${sdk_version}) does not match tag (${version})." >&2
+            exit 1
+          fi
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Validate crates.io token
+        shell: bash
+        run: |
+          if [[ -z "${{ secrets.CARGO_REGISTRY_TOKEN }}" ]]; then
+            echo "CARGO_REGISTRY_TOKEN is not configured." >&2
+            exit 1
+          fi
+
+      - name: Validate package
+        run: cargo package -p energiapro-sdk --locked
+
+      - name: Publish SDK crate
+        run: cargo publish -p energiapro-sdk --locked --token "${{ secrets.CARGO_REGISTRY_TOKEN }}"
