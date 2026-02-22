@@ -17,7 +17,8 @@ writing code.
 - Output data in `csv`, `json`, `jsonl`, or `parquet` formats
 
 ```sh
-brew install nhedger/energiapro
+brew tap nhedger/energiapro
+brew install energiapro
 ```
 
 See the [CLI documentation](./crates/energiapro-cli/README.md) for installation

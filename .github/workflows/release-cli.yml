@@ -130,6 +130,7 @@ jobs:
           merge-multiple: true
 
       - name: Generate checksums
+        id: checksums
         shell: bash
         run: |
           set -euo pipefail
@@ -149,7 +150,27 @@ jobs:
             fi
           done
 
-          sha256sum "${linux_x86_64_file}" "${linux_arm64_file}" "${darwin_arm64_file}" "${windows_file}" > SHA256SUMS.txt
+          linux_x86_64_sha256="$(sha256sum "${linux_x86_64_file}" | cut -d ' ' -f1)"
+          linux_arm64_sha256="$(sha256sum "${linux_arm64_file}" | cut -d ' ' -f1)"
+          darwin_x86_64_sha256="$(sha256sum "${darwin_x86_64_file}" | cut -d ' ' -f1)"
+          darwin_arm64_sha256="$(sha256sum "${darwin_arm64_file}" | cut -d ' ' -f1)"
+          windows_sha256="$(sha256sum "${windows_file}" | cut -d ' ' -f1)"
+
+          {
+            echo "${linux_x86_64_sha256}  ${linux_x86_64_file}"
+            echo "${linux_arm64_sha256}  ${linux_arm64_file}"
+            echo "${darwin_x86_64_sha256}  ${darwin_x86_64_file}"
+            echo "${darwin_arm64_sha256}  ${darwin_arm64_file}"
+            echo "${windows_sha256}  ${windows_file}"
+          } > SHA256SUMS.txt
+
+          {
+            echo "linux_x86_64=${linux_x86_64_sha256}"
+            echo "linux_arm64=${linux_arm64_sha256}"
+            echo "darwin_x86_64=${darwin_x86_64_sha256}"
+            echo "darwin_arm64=${darwin_arm64_sha256}"
+            echo "windows_x86_64=${windows_sha256}"
+          } >> "${GITHUB_OUTPUT}"
 
       - name: Publish release assets
         uses: softprops/action-gh-release@v2
@@ -200,8 +221,25 @@ jobs:
           set -euo pipefail
 
           version="${{ needs.validate.outputs.version }}"
+          linux_x86_64_sha256="${{ steps.checksums.outputs.linux_x86_64 }}"
+          linux_arm64_sha256="${{ steps.checksums.outputs.linux_arm64 }}"
+          darwin_x86_64_sha256="${{ steps.checksums.outputs.darwin_x86_64 }}"
+          darwin_arm64_sha256="${{ steps.checksums.outputs.darwin_arm64 }}"
+
           mkdir -p homebrew-tap/Formula
-          sed "s/{{version}}/${version}/g" crates/energiapro-cli/homebrew/energiapro.rb > homebrew-tap/Formula/energiapro.rb
+
+          sed \
+            -e "s/{{version}}/${version}/g" \
+            -e "s/{{sha256_linux_x86_64}}/${linux_x86_64_sha256}/g" \
+            -e "s/{{sha256_linux_arm64}}/${linux_arm64_sha256}/g" \
+            -e "s/{{sha256_darwin_x86_64}}/${darwin_x86_64_sha256}/g" \
+            -e "s/{{sha256_darwin_arm64}}/${darwin_arm64_sha256}/g" \
+            crates/energiapro-cli/homebrew/energiapro.rb > homebrew-tap/Formula/energiapro.rb
+
+          if grep -q '{{' homebrew-tap/Formula/energiapro.rb; then
+            echo "Homebrew formula still contains unresolved template placeholders." >&2
+            exit 1
+          fi
 
       - name: Commit Homebrew formula update
         uses: stefanzweifel/git-auto-commit-action@v7

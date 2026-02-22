@@ -54,8 +54,8 @@ When `cli-vX.Y.Z` is pushed:
 3. It creates a GitHub release in `nhedger/energiapro` with platform binaries
    and a `SHA256SUMS.txt` file.
 4. It renders `crates/energiapro-cli/homebrew/energiapro.rb` by replacing
-   `{{version}}` with the CLI version, then commits the result to
-   `nhedger/energiapro-homebrew` as `Formula/energiapro.rb`.
+   `{{version}}` and checksum placeholders with release values, then commits
+   the result to `nhedger/energiapro-homebrew` as `Formula/energiapro.rb`.
 
 ### SDK release workflow
 
