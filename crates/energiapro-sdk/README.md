@@ -22,6 +22,8 @@ Here's a simple example of how to use the `energiapro` crate to fetch
 measurements for a specific installation.
 
 ```rust
+use energiapro::{EnergiaPro, MeasurementScope};
+
 // Create a new EnergiaPro client
 let energiapro = EnergiaPro::new("<USERNAME>", "<SECRET_KEY>")?;
 
