@@ -36,6 +36,4 @@ pub use client::ClientOptions;
 pub use energiapro::EnergiaPro;
 pub use errors::{ApiErrorCode, EnergiaProError};
 pub use models::{Installation, Measurement};
-pub use requests::{InstallationsRequest, MeasurementsRequest};
-pub use resources::{InstallationsResource, MeasurementsResource};
 pub use types::{DateInput, MeasurementScope};

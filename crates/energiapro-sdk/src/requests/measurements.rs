@@ -12,7 +12,7 @@ const MEASUREMENTS_ENDPOINT: &str = "index.php";
 
 /// A request for fetching measurements
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct MeasurementsRequest {
+pub(crate) struct MeasurementsRequest {
     /// Scope of the measurements to fetch
     scope: MeasurementScope,
 
@@ -31,7 +31,7 @@ pub struct MeasurementsRequest {
 
 impl MeasurementsRequest {
     /// Create request for fetching measurements
-    pub fn new(client_id: impl Into<String>, installation_id: impl Into<String>) -> Self {
+    pub(crate) fn new(client_id: impl Into<String>, installation_id: impl Into<String>) -> Self {
         Self {
             scope: MeasurementScope::default(),
             client_id: client_id.into(),
@@ -41,19 +41,19 @@ impl MeasurementsRequest {
         }
     }
 
-    pub fn scope(mut self, scope: impl Into<MeasurementScope>) -> Self {
+    pub(crate) fn scope(mut self, scope: impl Into<MeasurementScope>) -> Self {
         self.scope = scope.into();
         self
     }
 
     /// Set the start date filter. Accepts `NaiveDate`, `String`, or `&str`.
-    pub fn from(mut self, from: impl DateInput) -> Self {
+    pub(crate) fn from(mut self, from: impl DateInput) -> Self {
         self.from = Some(from.into_date_string());
         self
     }
 
     /// Set the end date filter. Accepts `NaiveDate`, `String`, or `&str`.
-    pub fn to(mut self, to: impl DateInput) -> Self {
+    pub(crate) fn to(mut self, to: impl DateInput) -> Self {
         self.to = Some(to.into_date_string());
         self
     }

@@ -12,14 +12,14 @@ const INSTALLATIONS_NUM_INST_PLACEHOLDER: &str = "0";
 
 /// A request for fetching available installations.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct InstallationsRequest {
+pub(crate) struct InstallationsRequest {
     /// Client ID associated with the installations
     client_id: String,
 }
 
 impl InstallationsRequest {
     /// Create request for fetching installations.
-    pub fn new(client_id: impl Into<String>) -> Self {
+    pub(crate) fn new(client_id: impl Into<String>) -> Self {
         Self {
             client_id: client_id.into(),
         }

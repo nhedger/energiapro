@@ -1,5 +1,5 @@
 mod installations;
 mod measurements;
 
-pub use installations::InstallationsResource;
-pub use measurements::MeasurementsResource;
+pub(crate) use installations::InstallationsResource;
+pub(crate) use measurements::MeasurementsResource;

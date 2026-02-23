@@ -37,5 +37,5 @@ pub(crate) trait Request {
 pub(crate) use authenticate::AuthenticateRequest;
 
 // Re-exports
-pub use installations::InstallationsRequest;
-pub use measurements::MeasurementsRequest;
+pub(crate) use installations::InstallationsRequest;
+pub(crate) use measurements::MeasurementsRequest;
